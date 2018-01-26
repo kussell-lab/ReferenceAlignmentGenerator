@@ -1,0 +1,10 @@
+#!/bin/bash
+accession_list=$1
+working_dir=$2
+reference=$3
+echo $accession_list
+echo $working_dir
+ScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+#python3 $ScriptDir/FetchSRA.py $accession_list $working_dir
+#bash $ScriptDir/ConvertSRA2Fastq.sh $accession_list $working_dir
+bash $ScriptDir/MapRead2Reference.sh $accession_list $working_dir $reference
