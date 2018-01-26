@@ -1,7 +1,7 @@
 """
-This script download read files (SRA format) from NCBI FTP.
+This script downloads read files (SRA format) from NCBI FTP.
 Created by Mingzhi Lin (mingzhi9@gmail.com).
-It requires 
+Inputs: 
     (1) a file containing a list of accessions;
     (2) working directory.
 """

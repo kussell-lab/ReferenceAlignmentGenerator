@@ -1,7 +1,7 @@
 #!/bin/bash
-# This script convert .SRA file to .fastq using fastq-dump in sra-toolkits (https://github.com/ncbi/sra-tools/wiki).
+# This script converts .SRA file to .fastq using fastq-dump in sra-toolkits (https://github.com/ncbi/sra-tools/wiki).
 # Created by Mingzhi Lin (mingzhi9@gmail.com).
-# It requires
+# Inputs: 
 #   (1) the accession list file;
 #   (2) the working directory containing the SRA files.
 # Output:

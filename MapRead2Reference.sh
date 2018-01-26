@@ -2,7 +2,7 @@
 # This script maps reads to the reference genome to generate the concensus genomic sequence.
 # Created by Mingzhi Lin (mingzhi9@gmail.com).
 # It requires samtools (https://github.com/samtools/samtools) and smalt (http://www.sanger.ac.uk/science/tools/smalt-0).
-# Input:
+# Inputs:
 #   (1) the accession list file;
 #   (2) the working directory;
 #   (3) the reference genome.
