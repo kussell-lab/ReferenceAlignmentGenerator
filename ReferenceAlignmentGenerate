@@ -7,7 +7,7 @@ out_file=$5
 echo $accession_list
 echo $working_dir
 ScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-python3 $ScriptDir/FetchSRA.py $accession_list $working_dir
-bash $ScriptDir/ConvertSRA2Fastq.sh $accession_list $working_dir
-bash $ScriptDir/MapRead2Reference.sh $accession_list $working_dir $reference
-CollectGeneAlignments $accession_list $gff_file $working_dir ${out_file}
+#python3 $ScriptDir/FetchSRA.py $accession_list $working_dir
+#bash $ScriptDir/ConvertSRA2Fastq.sh $accession_list $working_dir
+#bash $ScriptDir/MapRead2Reference.sh $accession_list $working_dir $reference
+CollectGeneAlignments $accession_list $gff_file $working_dir ${out_file} --appendix ".pileup.fasta" --progress
