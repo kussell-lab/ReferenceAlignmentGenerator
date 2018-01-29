@@ -1,5 +1,5 @@
 #!/bin/bash
-# This script generate alignments of genes from a list of read accessions.
+# This script generates alignments of genes from a list of read accessions.
 # Created by Mingzhi Lin (mingzhi9@gmail.com).
 # Inputs:
 #   (1) accession_list: a list of read accessions of which SRA files can be downloaded from NCBI SRA database;
