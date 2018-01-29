@@ -1,3 +1,6 @@
+# This is a docker file for building docker image, see https://docs.docker.com
+# Created by Mingzhi Lin (mingzhi9@gmail.com).
+
 FROM ubuntu:17.10
 
 RUN apt-get update

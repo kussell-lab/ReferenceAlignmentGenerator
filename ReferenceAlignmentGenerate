@@ -1,13 +1,29 @@
 #!/bin/bash
+# This script generate alignments of genes from a list of read accessions.
+# Created by Mingzhi Lin (mingzhi9@gmail.com).
+# Inputs:
+#   (1) accession_list: a list of read accessions of which SRA files can be downloaded from NCBI SRA database;
+#   (2) working_dir: the working space;
+#   (3) reference: the reference genome (FASTA format) that will be used for read mapping;
+#   (4) gff_file: the .gff file of the reference genome, which will be used for extracting genes;
+#   (5) out_file: the output file of the final alignments.
 accession_list=$1
 working_dir=$2
 reference=$3
 gff_file=$4
 out_file=$5
-echo $accession_list
-echo $working_dir
+
+# Obtain the source file directory.
 ScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-#python3 $ScriptDir/FetchSRA.py $accession_list $working_dir
-#bash $ScriptDir/ConvertSRA2Fastq.sh $accession_list $working_dir
-#bash $ScriptDir/MapRead2Reference.sh $accession_list $working_dir $reference
+
+# Step 1: fetch .sra files from NCBI SRA ftp, and store them in the ${working_dir}.
+python3 $ScriptDir/FetchSRA.py $accession_list $working_dir
+
+# Step 2: convert .sra files to .fastq files in the ${working_dir} for read mapping in the next step.
+bash $ScriptDir/ConvertSRA2Fastq.sh $accession_list $working_dir
+
+# Step 3: map reads to the reference genome.
+bash $ScriptDir/MapRead2Reference.sh $accession_list $working_dir $reference
+
+# Step 4: extract the gene alignments, and output the final alignments into the ${out_file}.
 CollectGeneAlignments $accession_list $gff_file $working_dir ${out_file} --appendix ".pileup.fasta" --progress
