@@ -19,7 +19,7 @@ def main():
 
     #accession_list_file = '/Users/asherpreskasteinberg/Desktop/code/recombo/salmonella/SRA_files/sra_accession_Kentucky_1'
    # working_dir = '/Users/asherpreskasteinberg/Desktop/fetchsra_test/'
-    ncbi='~/ncbi/public/sra'
+    ncbi='/home/aps376/ncbi/public/sra'
 
     # read the list of accessions.
     accession_list = []
