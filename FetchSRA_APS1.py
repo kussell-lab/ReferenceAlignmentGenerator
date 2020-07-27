@@ -17,8 +17,9 @@ def main():
     accession_list_file = sys.argv[1]
     working_dir = sys.argv[2]
 
-    # accession_list_file = '/Users/asherpreskasteinberg/Desktop/code/recombo/salmonella/SRA_files/sra_accession_Kentucky_1'
-    # working_dir = '/Users/asherpreskasteinberg/Desktop/fetchsra_test/'
+    #accession_list_file = '/Users/asherpreskasteinberg/Desktop/code/recombo/salmonella/SRA_files/sra_accession_Kentucky_1'
+   # working_dir = '/Users/asherpreskasteinberg/Desktop/fetchsra_test/'
+    ncbi='~/ncbi/public/sra'
 
     # read the list of accessions.
     accession_list = []
@@ -37,7 +38,8 @@ def main():
         os.system('prefetch '+str(accession))
         print("done with "+str(accession))
        # sra_file_path = "%s/%s/%s/%s.sra" % (accession[:3], accession[:6], accession, accession)
-        sra_file_path = "%s/%s.sra" % (accession, accession)
+        # sra_file_path = "%s/%s.sra" % (accession, accession) #for local
+        sra_file_path = "%s/%s.sra" % (ncbi, accession) #for cluster
         #local_file_path = os.path.join(working_dir, accession + ".sra")
         shu.copy(sra_file_path, working_dir)
         #i think basically this then moves the sra file onto the working path
