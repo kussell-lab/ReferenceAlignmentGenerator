@@ -36,7 +36,7 @@ def main():
     print("Fetching SRA from NCBI via sra toolkit")
     for accession in tqdm(accession_list):
         # read path: SRR/SRR000/SRR000001/SRR000001.sra
-        os.system('fasterq-dump '+str(accession)+' -O '+working_dir+' -t '+'$BEEGFS')
+        os.system('fasterq-dump '+str(accession)+' -O '+working_dir+' -t '+'/beegfs/aps376')
        # sra_file_path = "%s/%s/%s/%s.sra" % (accession[:3], accession[:6], accession, accession)
         #sra_file_path = "%s/%s.sra" % (ncbi, accession) #for cluster
         #local_file_path = os.path.join(working_dir, accession + ".sra")
