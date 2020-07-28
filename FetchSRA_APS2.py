@@ -3,6 +3,7 @@ This script downloads read files (SRA format) from NCBI FTP.
 Created by Mingzhi Lin (mingzhi9@gmail.com).
 Modified by Asher Preska Steinberg (asherps@gmail.com)
 to accommodate updates to NCBI SRA database as of 200727
+This version just relies on fasterq from sra tool-kit and converts to fastq in one step
 Inputs: 
     (1) a file containing a list of accessions;
     (2) working directory.
@@ -35,13 +36,10 @@ def main():
     print("Fetching SRA from NCBI via sra toolkit")
     for accession in tqdm(accession_list):
         # read path: SRR/SRR000/SRR000001/SRR000001.sra
-        os.system('prefetch '+str(accession))
-        print("done with "+str(accession))
+        os.system('fasterq-dump '+str(accession)+' -O '+working_dir)
        # sra_file_path = "%s/%s/%s/%s.sra" % (accession[:3], accession[:6], accession, accession)
-        sra_file_path = "%s/%s.sra" % (accession, accession) #for local
         #sra_file_path = "%s/%s.sra" % (ncbi, accession) #for cluster
         #local_file_path = os.path.join(working_dir, accession + ".sra")
-        shu.copy(sra_file_path, working_dir)
         #i think basically this then moves the sra file onto the working path
 
        # with open(local_file_path, 'wb') as writer:

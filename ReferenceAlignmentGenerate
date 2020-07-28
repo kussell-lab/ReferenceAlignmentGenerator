@@ -17,10 +17,11 @@ out_file=$5
 ScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # Step 1: fetch .sra files from NCBI SRA ftp, and store them in the ${working_dir}.
-python3 $ScriptDir/FetchSRA_APS1.py $accession_list $working_dir
+python3 $ScriptDir/FetchSRA_APS2.py $accession_list $working_dir
 
 # Step 2: convert .sra files to .fastq files in the ${working_dir} for read mapping in the next step.
-bash $ScriptDir/ConvertSRA2Fastq.sh $accession_list $working_dir
+##might be able to skip ...
+#bash $ScriptDir/ConvertSRA2Fastq.sh $accession_list $working_dir
 
 # Step 3: map reads to the reference genome.
 bash $ScriptDir/MapRead2Reference.sh $accession_list $working_dir $reference
