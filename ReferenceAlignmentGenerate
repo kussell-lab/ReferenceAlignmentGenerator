@@ -28,3 +28,5 @@ bash $ScriptDir/MapRead2Reference.sh $accession_list $working_dir $reference
 
 # Step 4: extract the gene alignments, and output the final alignments into the ${out_file}.
 CollectGeneAlignments $accession_list $gff_file $working_dir ${out_file} --appendix ".pileup.fasta" --progress
+
+echo "Done with gene alignments, time to boogie"
