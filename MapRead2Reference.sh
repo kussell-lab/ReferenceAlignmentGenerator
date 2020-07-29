@@ -7,7 +7,7 @@
 #   (2) the working directory;
 #   (3) the reference genome.
 # Output:
-#   the concensus genomic sequences in FASTA format.
+#   the consensus genomic sequences in FASTA format.
 
 function map2reference {
     READ=$1

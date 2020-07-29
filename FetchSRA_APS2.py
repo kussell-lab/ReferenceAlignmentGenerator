@@ -28,23 +28,11 @@ def main():
         for line in reader:
             accession_list.append(line.rstrip())
 
-    # open FTP connection.
-    # ftp = ftplib.FTP("ftp.ncbi.nlm.nih.gov")
-    # ftp.login("anonymous", "mingzhi.lin@nyu.edu")
-    # ftp.cwd("sra/sra-instant/reads/ByRun/sra")
-
     print("Fetching SRA from NCBI via sra toolkit")
     for accession in tqdm(accession_list):
         # read path: SRR/SRR000/SRR000001/SRR000001.sra
-        os.system('fasterq-dump '+str(accession)+' -O '+working_dir+' -t '+'$SCRATCH'+' -p')
-       # sra_file_path = "%s/%s/%s/%s.sra" % (accession[:3], accession[:6], accession, accession)
-        #sra_file_path = "%s/%s.sra" % (ncbi, accession) #for cluster
-        #local_file_path = os.path.join(working_dir, accession + ".sra")
-        #i think basically this then moves the sra file onto the working path
-
-       # with open(local_file_path, 'wb') as writer:
-            #ftp.retrbinary('RETR %s' % ftp_file_path, writer.write)
-    #ftp.close()
+        #os.system('fasterq-dump '+str(accession)+' -O '+working_dir+' -t '+'$SCRATCH'+' -p')
+        os.system('fasterq-dump ' + str(accession) + ' -O ' + working_dir + ' -t ' + '$SCRATCH')
     print("Completed downloading %d read files." % len(accession_list))
 
 if __name__ == "__main__":
