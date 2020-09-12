@@ -32,7 +32,11 @@ def main():
     for accession in tqdm(accession_list):
         # read path: SRR/SRR000/SRR000001/SRR000001.sra
         #os.system('fasterq-dump '+str(accession)+' -O '+working_dir+' -t '+'$SCRATCH'+' -p')
+        ##cluster
         os.system('fasterq-dump ' + str(accession) + ' -O ' + working_dir + ' -t ' + '$SCRATCH')
+        ##local
+        #os.system('fasterq-dump ' + str(accession) + ' -O ' + working_dir + ' -t ' + working_dir)
+
     print("Completed downloading %d read files." % len(accession_list))
 
 if __name__ == "__main__":
