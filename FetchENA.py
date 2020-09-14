@@ -14,10 +14,10 @@ import shutil as shu
 from tqdm import tqdm
 def main():
     """ main function """
-    #accession_list_file = sys.argv[1]
-   # working_dir = sys.argv[2]
+    accession_list_file = sys.argv[1]
+    working_dir = sys.argv[2]
 
-    accession_list_file = '/Users/asherpreskasteinberg/Desktop/code/recombo/APS138_cjejuni/filereport_read_run_PRJEB31119_tsv.txt'
+    #accession_list_file = '/Users/asherpreskasteinberg/Desktop/code/recombo/APS138_cjejuni/filereport_read_run_PRJEB31119_tsv.txt'
     #working_dir = '/Users/asherpreskasteinberg/Desktop/fetchsra_test/'
 
 
