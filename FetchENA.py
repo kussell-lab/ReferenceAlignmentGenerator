@@ -14,12 +14,11 @@ import shutil as shu
 from tqdm import tqdm
 def main():
     """ main function """
-    accession_list_file = sys.argv[1]
-    working_dir = sys.argv[2]
+    #accession_list_file = sys.argv[1]
+   # working_dir = sys.argv[2]
 
-    #accession_list_file = '/Users/asherpreskasteinberg/Desktop/code/recombo/APS138_cjejuni/filereport_read_run_PRJEB31119_tsv.txt'
+    accession_list_file = '/Users/asherpreskasteinberg/Desktop/code/recombo/APS138_cjejuni/filereport_read_run_PRJEB31119_tsv.txt'
     #working_dir = '/Users/asherpreskasteinberg/Desktop/fetchsra_test/'
-    ncbi='/home/aps376/ncbi/public/sra'
 
 
     dat = pd.read_csv(accession_list_file, sep = '\t')
@@ -35,8 +34,14 @@ def main():
         else:
             fastqs = fastq.split(";")
             sra = fastq.split("/")
-            os.system("wget "+ fastqs[0])
-            os.system("wget " + fastqs[1])
+            dir = os.getcwd()
+            if os.path.isfile(dir + '/'+sra[5] + '_1.fastq'):
+                i = i + 1
+                continue
+            os.system("ssh dtn")
+            os.system("wget -nv "+ fastqs[0])
+            os.system("wget -nv " + fastqs[1])
+            os.system("logout")
             ##unzip the files
             os.system("gunzip "+ sra[5]+'_1.fastq')
             os.system("gunzip " + sra[5]+'_2.fastq')
