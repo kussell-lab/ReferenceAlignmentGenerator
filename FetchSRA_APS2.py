@@ -32,8 +32,8 @@ def main():
     for accession in tqdm(accession_list):
         # read path: SRR/SRR000/SRR000001/SRR000001.sra
         #os.system('fasterq-dump '+str(accession)+' -O '+working_dir+' -t '+'$SCRATCH'+' -p')
-        ##cluster
-        os.system('fasterq-dump ' + str(accession) + ' -O ' + working_dir + ' -t ' + '$SCRATCH')
+        ##cluster -- trying a speedup with -e to increase number of threads, ... we will see how it works
+        os.system('fasterq-dump ' + str(accession) + ' -O ' + working_dir + ' -t ' + '$BEEGFS'+ ' -e 10')
         ##local
         #os.system('fasterq-dump ' + str(accession) + ' -O ' + working_dir + ' -t ' + working_dir)
 

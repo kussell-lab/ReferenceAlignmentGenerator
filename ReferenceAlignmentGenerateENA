@@ -2,11 +2,12 @@
 # This script generates alignments of genes from a list of read accessions.
 # Created by Mingzhi Lin (mingzhi9@gmail.com).
 # Inputs:
-#   (1) accession_list: a list of read accessions of which SRA files can be downloaded from NCBI SRA database;
+#   (1) accession_list: a list of read or project accessions of which SRA files can be downloaded from ENA SRA database;
 #   (2) working_dir: the working space;
 #   (3) reference: the reference genome (FASTA format) that will be used for read mapping;
 #   (4) gff_file: the .gff file of the reference genome, which will be used for extracting genes;
 #   (5) out_file: the output file of the final alignments.
+#   (6) ENA_list: a list of the actual read accessions if the project accessions are different than the read accessions
 accession_list=$1
 working_dir=$2
 reference=$3
