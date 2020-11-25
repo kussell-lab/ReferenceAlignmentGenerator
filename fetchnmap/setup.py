@@ -8,7 +8,7 @@ with open("requirements.txt", 'rU') as reader:
 
 setup(name='fetchnmap',
         python_requires='>=3',
-        version='201124',
+        version='201125',
         description='Fetch SRAs from NCBI and map to reference genome',
         url='https://github.com/apsteinberg/mcorr',
         license='MIT',
