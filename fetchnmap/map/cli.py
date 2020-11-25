@@ -24,10 +24,10 @@ def main():
     reference = args.reference
     tmp = args.tmp
 
-    #build index of k-mer words for the reference genome
-    os.system("smalt index %s %s" % (reference, reference))
-    #index and extract FASTA file
-    os.system("samtools faidx %s" % reference)
+    # #build index of k-mer words for the reference genome
+    # os.system("smalt index %s %s" % (reference, reference))
+    # #index and extract FASTA file
+    # os.system("samtools faidx %s" % reference)
 
     #read the list of accessions
     accession_list = []
@@ -37,20 +37,50 @@ def main():
     ##download from NCBI
     dwnlds = 0
     maps = 0
-    if tmp:
+    if args.tmp is not None:
         tmpdir = ' -t ' + tmp
+        print("set temp dir to: %s" % tmp)
     else:
         tmpdir= ''
+
+    scriptdir = os.path.dirname(os.path.abspath(__file__))
+    mapRead2Ref = os.path.join(scriptdir, "MapRead2RefMini.sh")
+    count = 0
+    #reads = []
+    totalcount = 0
+    numaccessions = len(accession_list)
+    print(numaccessions)
+    ##temp file for mapread2ref
+    reads = os.path.join(wrkdir, "reads")
+    ##remove garbage from previous runs
+    if os.path.isfile(reads):
+        os.remove(reads)
+    ##otherwise open a new one
+    f = open(reads, "a+")
     for accession in tqdm(accession_list):
+        totalcount = totalcount+1
         os.system('fasterq-dump ' + str(accession) + ' -O ' + wrkdir + tmpdir)
         read1 = os.path.join(wrkdir, accession + "_1.fastq")
         read2 = os.path.join(wrkdir, accession + "_2.fastq")
         if os.path.isfile(read1) and os.path.isfile(read2):
-            j = fn.map2reference(accession, wrkdir, reference)
+            count = count + 1
+            print(accession)
+            f.write(accession+"\n")
+            #reads.append(accession)
+            if count == 10 or totalcount == numaccessions:
+                f.close()
+                os.system("bash %s %s %s %s" % (mapRead2Ref, reads, wrkdir, reference))
+                ##reset count
+                #reads = []
+                os.remove(reads)
+                count = 0
+                if totalcount != numaccessions:
+                    f = open(reads, "a+")
+            #j = fn.map2reference(accession, wrkdir, reference)
+            #maps = maps + j
             dwnlds = dwnlds + 1
-            maps = maps + j
-    print("%d successful SRA downloads" % dwnlds)
-    print("%d reads mapped to reference genome" % maps)
+    print("%d downloads and maps" % dwnlds)
+    #print("%d reads mapped to reference genome" % maps)
 
 
 
