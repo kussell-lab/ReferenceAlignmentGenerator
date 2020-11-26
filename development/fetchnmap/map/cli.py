@@ -44,7 +44,7 @@ def main():
         tmpdir= ''
 
     scriptdir = os.path.dirname(os.path.abspath(__file__))
-    mapRead2Ref = os.path.join(scriptdir, "MapRead2RefMini.sh")
+    mapRead2Ref = os.path.join(scriptdir, "mapnclean")
     count = 0
     totalcount = 0
     numaccessions = len(accession_list)

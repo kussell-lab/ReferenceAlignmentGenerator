@@ -8,17 +8,19 @@ with open("requirements.txt", 'rU') as reader:
 
 setup(name='fetchnmap',
         python_requires='>=3',
-        version='201125',
+        version='201126',
         description='Fetch SRAs from NCBI and map to reference genome',
         url='https://github.com/apsteinberg/mcorr',
         license='MIT',
         author='Asher Preska Steinberg',
         author_email='apsteinberg@nyu.edu',
-        packages=['map'],
-        package_data={'': ['MapRead2RefMini.sh']},
+        packages=['bin'],
+        package_data={'': ['mapnclean']},
         include_package_data=True,
         install_requires=requirements,
-        entry_points = {
-            'console_scripts' : ['fetchnmap=map.cli:main'],
-            }
+        scripts=['bin/funniest-joke', 'bin/funnier-joke',
+                 'bin/fetchnzip', 'bin/mapnclean']
+        # entry_points = {
+        #     'console_scripts' : ['fetchnmap=map.cli:main'],
+        #     }
       )
