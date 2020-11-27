@@ -1,7 +1,7 @@
 #!/bin/bash
-# set -x
+set -x
 # This script maps reads to the reference genome to generate the concensus genomic sequence.
-# Created by Mingzhi Lin (mingzhi9@gmail.com) and edited by Asher Preska Steinberg (apsteinberg@nyu.edu)
+# Created by Mingzhi Lin (mingzhi9@gmail.com).
 # It requires samtools (https://github.com/samtools/samtools) and smalt (http://www.sanger.ac.uk/science/tools/smalt-0).
 # Inputs:
 #   (1) the accession list file;
