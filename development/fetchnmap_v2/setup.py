@@ -18,7 +18,7 @@ setup(name='fetchnmap',
         package_data={'': ['mapnclean']},
         include_package_data=True,
         install_requires=requirements,
-        scripts=['bin/fetchnzip', 'bin/mapnclean']
+        scripts=['bin/fetchnzip', 'bin/mapnclean', 'bin/mapncleantars']
         # entry_points = {
         #     'console_scripts' : ['fetchnmap=map.cli:main'],
         #     }
