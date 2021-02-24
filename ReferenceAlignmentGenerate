@@ -1,4 +1,5 @@
 #!/bin/bash
+# NEEDS TO BE REVAMPED!!!
 # This script generates alignments of genes from a list of read accessions.
 # Created by Mingzhi Lin (mingzhi9@gmail.com).
 # Inputs:
