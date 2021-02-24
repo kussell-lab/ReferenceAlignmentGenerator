@@ -11,8 +11,8 @@ import ftplib
 from tqdm import tqdm
 def main():
     """ main function """
-     accession_list_file = sys.argv[1]
-     working_dir = sys.argv[2]
+    accession_list_file = sys.argv[1]
+    working_dir = sys.argv[2]
 
   #  accession_list_file = '/Users/asherpreskasteinberg/Desktop/code/recombo/salmonella/SRA_files/sra_accession_Kentucky_1'
  #   working_dir = '~/Desktop/fetchsra_test/'
