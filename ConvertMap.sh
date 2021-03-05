@@ -25,6 +25,7 @@ function map2reference {
         rm ${WORKING_DIR}/${READ}.sorted.bam
         rm ${WORKING_DIR}/${READ}_1.fastq
         rm ${WORKING_DIR}/${READ}_2.fastq
+        rm -f ${WORKING_DIR}/${READ}.fastq
         rm -r ${WORKING_DIR}/${READ}
 }
 
@@ -35,4 +36,5 @@ working_dir=$2
 reference=$3
 smalt index ${reference} ${reference}
 samtools faidx ${reference}
+cd ${working_dir}
 parallel map2reference {} ${working_dir} ${reference} :::: ${accession_list_file}
