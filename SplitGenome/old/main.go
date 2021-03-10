@@ -1,6 +1,6 @@
 package main
 
-//this program splits a gap-filtered master MSA file (filtered with FilterGaps) into core and flexible genomes
+//this program splits a master MSA file into core and flexible genomes
 //written by Asher Preska Steinberg (apsteinberg@nyu.edu)
 import (
 	"bufio"
@@ -20,8 +20,8 @@ import (
 )
 
 func main() {
-	app := kingpin.New("SplitGenome", "splits a gap-filtered MSA file (filtered with FilterGaps) of all strains into core and flexible genomes")
-	app.Version("v20210310")
+	app := kingpin.New("SplitGenome", "splits a master MSA file of all strains into core and flexible genomes")
+	app.Version("v20210112")
 	alnFile := app.Arg("master_MSA", "multi-sequence alignment file for all genes").Required().String()
 	sampleFile := app.Arg("strain list", "list of all strains").Required().String()
 	cutoff := app.Arg("core-cutoff", "Percentage above which to be considered a core gene (0 to 100)").Required().Int()
@@ -35,10 +35,10 @@ func main() {
 	}
 
 	runtime.GOMAXPROCS(*ncpu)
-	//alnFile := "/Volumes/aps_timemachine/recombo/APS168_gapfiltered/gapfiltered/test_3_GAPFILTERED"
+	//alnFile := "/Volumes/aps_timemachine/recombo/APS160_splitGenome/1224_properheader"
 	////strain list
-	//sampleFile := "/Volumes/aps_timemachine/recombo/APS168_gapfiltered/gapfiltered/strain_list"
-	//outdir := "/Volumes/aps_timemachine/recombo/APS168_gapfiltered/gapfiltered/threshold99"
+	//sampleFile := "/Volumes/aps_timemachine/recombo/APS160_splitGenome/strain_list"
+	//outdir := "/Volumes/aps_timemachine/recombo/APS160_splitGenome/threshold99"
 	//numSplitters := 4
 	//cutoff := 99
 	//timer
@@ -125,8 +125,8 @@ func readAlignments(done <-chan struct{}, file string) (<-chan Alignment, <-chan
 				alnID := strings.Split(alignment[0].Id, " ")[0]
 				select {
 				case alignments <- Alignment{alnID, numAln, alignment}:
-					fmt.Printf("\rRead %d alignments.\n", numAln)
-					fmt.Printf("\r alignment ID: %s\n", alnID)
+					fmt.Printf("\rRead %d alignments.", numAln)
+					fmt.Printf("\r alignment ID: %s", alnID)
 				case <-done:
 					fmt.Printf(" Total alignments %d\n", numAln)
 				}
@@ -147,11 +147,15 @@ func splitter(done <-chan struct{}, alignments <-chan Alignment, genes chan<- re
 		var frac float64
 		//define core/flex string
 		var genome string
-		//count number of strains with the gene; which for gap-filtered MSAs filtered with FilterGaps
-		//is just the number of strains which have the sequence
+		//count number of strains with the gene; the strain needs to have at least one full codon
+		//to say the gene is present
 		var count int
-		count = len(aln.Sequences)
-		//get fraction of strains which have the gene
+		for _, s := range aln.Sequences {
+			NumFullCodons := extractFullCodons(s)
+			if NumFullCodons > 0 {
+				count++
+			}
+		}
 		frac = float64(count) / float64(totSeqs)
 		//is it core or flex
 		if frac > threshold {
@@ -301,3 +305,39 @@ func extractFullCodons(s seq.Sequence) (NumFullCodons int) {
 
 // Codon is a byte list of length 3
 type Codon []byte
+
+// readAlignments reads sequence alignment from a extended Multi-FASTA file,
+// and return a channel of alignment, which is a list of seq.Sequence
+//func readAlignments(file string) (alnChan chan Alignment) {
+//	alnChan = make(chan Alignment)
+//	read := func() {
+//		defer close(alnChan)
+//
+//		f, err := os.Open(file)
+//		if err != nil {
+//			panic(err)
+//		}
+//		defer f.Close()
+//		xmfaReader := seq.NewXMFAReader(f)
+//		numAln := 0
+//		for {
+//			alignment, err := xmfaReader.Read()
+//			if err != nil {
+//				if err != io.EOF {
+//					panic(err)
+//				}
+//				break
+//			}
+//			if len(alignment) > 0 {
+//				numAln++
+//				alnID := strings.Split(alignment[0].Id, " ")[0]
+//				alnChan <- Alignment{ID: alnID, Sequences: alignment}
+//				fmt.Printf("\rRead %d alignments.", numAln)
+//				fmt.Printf("\r alignment ID: %s", alnID)
+//			}
+//		}
+//		fmt.Printf(" Total alignments %d\n", numAln)
+//	}
+//	go read()
+//	return
+//}

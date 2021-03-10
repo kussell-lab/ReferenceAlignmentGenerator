@@ -63,7 +63,7 @@ func main() {
 	//add the number of core and flex to the bottom of the spreadsheet
 
 	duration := time.Since(start)
-	fmt.Println("Time to filter gapped alignments:", duration)
+	fmt.Println("Time to filter fgapped alignments:", duration)
 }
 
 // readAlignments reads sequence alignment from a extended Multi-FASTA file,
