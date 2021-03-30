@@ -2,17 +2,17 @@
 import os
 import numpy as np
 
-dir = '/Users/asherpreskasteinberg/Desktop/code/recombo/APS168_sars-cov-2/'
+dir = '/Users/asherpreskasteinberg/Desktop/code/recombo/APS171_NG_analysis/'
 outdir = dir+'piles_tbc1/'
 complete = set()
-piles = open(dir + 'APS168_completepiles', 'r')
+piles = open(dir + 'APS171_completepiles', 'r')
 for _, pile in enumerate(piles):
     pile = str.rstrip(pile)
     complete.add(pile)
 
 all_fastqs = set()
 
-dwnlds = open(dir + 'SraAccList.txt', 'r')
+dwnlds = open(dir + 'sra_list', 'r')
 #dwnlds = open(dir + 'APS154_blankpiles', 'r')
 for _, sra in enumerate(dwnlds):
     sra = str.rstrip(sra)

@@ -1,6 +1,6 @@
-package old
+package main
 
-//this program splits a master MSA file into core and flexible genomes
+//this program takes a gap-filtered MSA file of all strains and filters for genes which show up in a certain fraction of strains
 //written by Asher Preska Steinberg (apsteinberg@nyu.edu)
 import (
 	"bufio"
@@ -20,11 +20,12 @@ import (
 )
 
 func main() {
-	app := kingpin.New("SplitGenome", "splits a master MSA file of all strains into core and flexible genomes")
-	app.Version("v20210112")
+	app := kingpin.New("GeneBins", "takes a gap-filtered MSA file of all strains and filters for genes which show up in a certain fraction of strains")
+	app.Version("v20210330")
 	alnFile := app.Arg("master_MSA", "multi-sequence alignment file for all genes").Required().String()
 	sampleFile := app.Arg("strain list", "list of all strains").Required().String()
-	cutoff := app.Arg("core-cutoff", "Percentage above which to be considered a core gene (0 to 100)").Required().Int()
+	min := app.Arg("minimum", "min percentage above which a gene is included in the MSA (0 to 99; non-inclusive)").Required().Int()
+	max := app.Arg("max", "max percentage below which a gene is included in the MSA (0 to 100; inclusive)").Required().Int()
 	outdir := app.Arg("outdir", "output directory for the core/flex MSA gene percentage csv").Required().String()
 	ncpu := app.Flag("num-cpu", "Number of CPUs (default: using all available cores)").Default("0").Int()
 	numSplitters := app.Flag("threads", "Number of alignments to process at a time (default: 8)").Default("8").Int()
@@ -35,21 +36,23 @@ func main() {
 	}
 
 	runtime.GOMAXPROCS(*ncpu)
-	//alnFile := "/Volumes/aps_timemachine/recombo/APS160_splitGenome/1224_properheader"
+	//alnFile := "/Users/asherpreskasteinberg/Desktop/code/recombo/APS180_genebins/genebin_test/1224_properheader_GAPFILTERED"
 	////strain list
-	//sampleFile := "/Volumes/aps_timemachine/recombo/APS160_splitGenome/strain_list"
-	//outdir := "/Volumes/aps_timemachine/recombo/APS160_splitGenome/threshold99"
+	//sampleFile := "/Users/asherpreskasteinberg/Desktop/code/recombo/APS180_genebins/genebin_test/strain_list"
+	//outdir := "/Users/asherpreskasteinberg/Desktop/code/recombo/APS180_genebins/genebin_test/two_strains"
 	//numSplitters := 4
-	//cutoff := 99
+	//min := 30
+	//max := 50
 	//timer
 	start := time.Now()
 
 	//make the outdir and core and flexible MSAs
-	makeCFMSA(*outdir)
+	initOutMSA(*outdir, *min, *max)
 	//prepare the gene percentage out csv
-	makeGeneCSV(*cutoff, *outdir)
-	//set the threshold
-	threshold := float64(*cutoff) / 100
+	makeGeneCSV(*min, *max, *outdir)
+	//set the bin width
+	minimum := float64(*min) / 100
+	maximum := float64(*max) / 100
 	samples := readSamples(*sampleFile)
 	//get the total number of sequences
 	totSeqs := len(samples)
@@ -62,7 +65,7 @@ func main() {
 	var wg sync.WaitGroup
 	for i := 0; i < *numSplitters; i++ {
 		wg.Add(1)
-		go splitter(done, alignments, c, totSeqs, threshold, i, &wg)
+		go splitter(done, alignments, c, totSeqs, minimum, maximum, i, &wg)
 	}
 
 	go func() {
@@ -71,8 +74,11 @@ func main() {
 	}()
 	//end of pipeline; write files
 	for gene := range c {
-		writeMSA(gene, *outdir)
-		getGenePercentage(gene, *cutoff, *outdir)
+		//if true, write to the out MSA
+		if gene.bin {
+			writeMSA(gene, *outdir, *min, *max)
+		}
+		getGenePercentage(gene, *outdir, *min, *max)
 	}
 	if err := <-errc; err != nil { // HLerrc
 		panic(err)
@@ -80,7 +86,7 @@ func main() {
 	//add the number of core and flex to the bottom of the spreadsheet
 
 	duration := time.Since(start)
-	fmt.Println("Time to split into core and flex:", duration)
+	fmt.Println("Time to make gene-binned MSA:", duration)
 }
 
 // Alignment is an array of multiple sequences with same length.
@@ -90,10 +96,10 @@ type Alignment struct {
 	Sequences []seq.Sequence
 }
 
-// A result is a single gene alignment belonging to the core or flexible genome
+// A result is a single gene alignment which either belongs to the bin or not
 type result struct {
 	Alignment Alignment
-	genome    string  //"CORE" or "FLEX"
+	bin       bool    //if true, it's part of the bin, if false, it's not
 	frac      float64 //fraction of strains that have the gene
 }
 
@@ -125,8 +131,8 @@ func readAlignments(done <-chan struct{}, file string) (<-chan Alignment, <-chan
 				alnID := strings.Split(alignment[0].Id, " ")[0]
 				select {
 				case alignments <- Alignment{alnID, numAln, alignment}:
-					fmt.Printf("\rRead %d alignments.", numAln)
-					fmt.Printf("\r alignment ID: %s", alnID)
+					fmt.Printf("\rRead %d alignments.\n", numAln)
+					fmt.Printf("\r alignment ID: %s\n", alnID)
 				case <-done:
 					fmt.Printf(" Total alignments %d\n", numAln)
 				}
@@ -139,36 +145,30 @@ func readAlignments(done <-chan struct{}, file string) (<-chan Alignment, <-chan
 
 // splitter reads gene alignments from the master MSA, figures out if the gene is core/flex
 // then sends these processed results on alnChan until either the master MSA or done channel is closed.
-func splitter(done <-chan struct{}, alignments <-chan Alignment, genes chan<- result, totSeqs int, threshold float64, id int, wg *sync.WaitGroup) {
+func splitter(done <-chan struct{}, alignments <-chan Alignment, genes chan<- result, totSeqs int, min float64,
+	max float64, id int, wg *sync.WaitGroup) {
 	defer wg.Done()
 	//fmt.Printf("Worker %d starting\n", id)
 	for aln := range alignments { // HLpaths
 		//get the fraction of sequences which have the gene
 		var frac float64
-		//define core/flex string
-		var genome string
-		//count number of strains with the gene; the strain needs to have at least one full codon
-		//to say the gene is present
+		//boolean for if it's in the bin or not
+		var bin bool
+		//count number of strains with the gene; which for gap-filtered MSAs filtered with FilterGaps
+		//is just the number of strains which have the sequence
 		var count int
-		for _, s := range aln.Sequences {
-			NumFullCodons := extractFullCodons(s)
-			if NumFullCodons > 0 {
-				count++
-			}
-		}
+		count = len(aln.Sequences)
+		//get fraction of strains which have the gene
 		frac = float64(count) / float64(totSeqs)
-		//is it core or flex
-		if frac > threshold {
-			genome = "CORE"
+		//is it part of the bin or not
+		if frac > min && frac <= max {
+			bin = true
 		} else {
-			genome = "FLEX"
+			bin = false
 		}
-		gene := result{aln, genome, frac}
-		//writeAln(aln, outdir)
+		gene := result{aln, bin, frac}
 		select {
-		//case c <- aln.num:
 		case genes <- gene:
-		//	writeAln(aln, outdir)
 		case <-done:
 			return
 		}
@@ -207,9 +207,11 @@ func check(e error) {
 	}
 }
 
-//writeMSA write the gene to the correct MSA (core or flex)
-func writeMSA(c result, outdir string) {
-	MSAname := "MSA_" + c.genome
+//writeMSA write the gene to the MSA if it's part of the bin
+func writeMSA(c result, outdir string, min int, max int) {
+	minimum := strconv.Itoa(min)
+	maximum := strconv.Itoa(max)
+	MSAname := "MSA_" + minimum + "-" + maximum
 	MSA := filepath.Join(outdir, MSAname)
 	//f, err := os.OpenFile(filename, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 	f, err := os.OpenFile(MSA, os.O_APPEND|os.O_WRONLY, 0600)
@@ -226,9 +228,10 @@ func writeMSA(c result, outdir string) {
 	f.WriteString("=\n")
 }
 
-func getGenePercentage(c result, cutoff int, outdir string) {
-	threshold := strconv.Itoa(cutoff)
-	name := "gene_percentages_" + threshold + "%_cutoff.csv"
+func getGenePercentage(c result, outdir string, min int, max int) {
+	minimum := strconv.Itoa(min)
+	maximum := strconv.Itoa(max)
+	name := "gene_percentages_" + minimum + "-" + maximum + ".csv"
 	path := filepath.Join(outdir, name)
 	w, err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY, 0600)
 	defer w.Close()
@@ -240,40 +243,40 @@ func getGenePercentage(c result, cutoff int, outdir string) {
 	//get percentages and write a line
 	p := fmt.Sprintf("%f", c.frac)
 	aln := c.Alignment
-	genePercent := []string{aln.ID, p, c.genome}
+	bin := strconv.FormatBool(c.bin)
+	genePercent := []string{aln.ID, p, bin}
 	csvwriter.Write(genePercent)
 	//w.Close()
 }
 
 //makeGeneCSV initiates the gene percentage CSV
-func makeGeneCSV(cutoff int, outdir string) {
+func makeGeneCSV(min int, max int, outdir string) {
 	//prepare the gene percentage out csv
-	t := strconv.Itoa(cutoff)
-	name := "gene_percentages_" + t + "%_cutoff.csv"
+	minimum := strconv.Itoa(min)
+	maximum := strconv.Itoa(max)
+	name := "gene_percentages_" + minimum + "-" + maximum + ".csv"
 	path := filepath.Join(outdir, name)
 	w, err := os.Create(path)
 	check(err)
 	defer w.Close()
 	csvwriter := csv.NewWriter(w)
 	defer csvwriter.Flush()
-	header := []string{"gene", "fraction of strains", "genome"}
+	header := []string{"gene", "fraction of strains", "w/n bin"}
 	err = csvwriter.Write(header)
 	check(err)
 
 	return
 }
 
-//makeCFMSA makes the outdir and initializes the MSA files for core and flexible genomes
-func makeCFMSA(outdir string) {
+//initOutMSA makes the outdir and initializes the MSA file
+func initOutMSA(outdir string, min int, max int) {
 	if _, err := os.Stat(outdir); os.IsNotExist(err) {
 		os.Mkdir(outdir, 0755)
 	}
-	MSA := filepath.Join(outdir, "MSA_CORE")
+	minimum := strconv.Itoa(min)
+	maximum := strconv.Itoa(max)
+	MSA := filepath.Join(outdir, "MSA_"+minimum+"-"+maximum)
 	f, err := os.Create(MSA)
-	check(err)
-	f.Close()
-	MSA = filepath.Join(outdir, "MSA_FLEX")
-	f, err = os.Create(MSA)
 	check(err)
 	f.Close()
 }
@@ -305,39 +308,3 @@ func extractFullCodons(s seq.Sequence) (NumFullCodons int) {
 
 // Codon is a byte list of length 3
 type Codon []byte
-
-// readAlignments reads sequence alignment from a extended Multi-FASTA file,
-// and return a channel of alignment, which is a list of seq.Sequence
-//func readAlignments(file string) (alnChan chan Alignment) {
-//	alnChan = make(chan Alignment)
-//	read := func() {
-//		defer close(alnChan)
-//
-//		f, err := os.Open(file)
-//		if err != nil {
-//			panic(err)
-//		}
-//		defer f.Close()
-//		xmfaReader := seq.NewXMFAReader(f)
-//		numAln := 0
-//		for {
-//			alignment, err := xmfaReader.Read()
-//			if err != nil {
-//				if err != io.EOF {
-//					panic(err)
-//				}
-//				break
-//			}
-//			if len(alignment) > 0 {
-//				numAln++
-//				alnID := strings.Split(alignment[0].Id, " ")[0]
-//				alnChan <- Alignment{ID: alnID, Sequences: alignment}
-//				fmt.Printf("\rRead %d alignments.", numAln)
-//				fmt.Printf("\r alignment ID: %s", alnID)
-//			}
-//		}
-//		fmt.Printf(" Total alignments %d\n", numAln)
-//	}
-//	go read()
-//	return
-//}
