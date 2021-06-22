@@ -1,6 +1,7 @@
 package main
 
-//this program splits MSA into MSA files for each sequence cluster
+//this program splits XMFA files into XMFA files for each sequence cluster
+//if you have XMFA files for both the core and flexible genomes, it will split both
 //written by Asher Preska Steinberg (apsteinberg@nyu.edu)
 import (
 	"bufio"
