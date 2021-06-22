@@ -19,3 +19,5 @@ install the program ReferenceAlignmentGenerate via pip:
 * `<the reference genome>` is the reference genome for read mapping;
 * `<the gff file>` is the corresponding GFF file of the reference genome;
 * `<the output file>` contains the output alignment results.
+
+(2) To split 
