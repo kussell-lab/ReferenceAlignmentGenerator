@@ -2,6 +2,7 @@
 # This script maps reads to the reference genome to generate the consensus genomic sequence.
 # Created by Asher Preska Steinberg (apsteinberg@nyu.edu) based on scripts by Mingzhi Lin (mingzhi9@gmail.com)
 # It requires samtools (https://github.com/samtools/samtools) and smalt (http://www.sanger.ac.uk/science/tools/smalt-0).
+# this version is advantageous to the previous for larger datasets where FASTQs take up a prohibitive amount of disk space
 # Inputs:
 #   (1) the accession list file;
 #   (2) the working directory;
