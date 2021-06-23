@@ -6,7 +6,7 @@ with open("requirements.txt", 'rU') as reader:
     for line in reader:
         requirements.append(line.strip())
 
-setup(name='fetchnmap',
+setup(name='RefAligner',
       python_requires='>=3',
       version='210623',
       description='Fetch SRAs from NCBI and map to reference genome',
@@ -14,8 +14,7 @@ setup(name='fetchnmap',
       license='MIT',
       author='Asher Preska Steinberg',
       author_email='apsteinberg@nyu.edu',
-      packages=['bin'],
-      package_data={'': ['mapnclean']},
+      packages=['RefAligner'],
       include_package_data=True,
       install_requires=requirements,
       scripts=['RefAligner/ConvertMap.sh'],

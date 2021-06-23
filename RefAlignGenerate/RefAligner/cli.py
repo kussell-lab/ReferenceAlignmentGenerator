@@ -6,14 +6,14 @@ import os
 this commandline program which executes each step of the ReferenceAlignmentGenerator
 """
 def main():
-    parser = argparse.ArgumentParser(description="Takes raw reads from SRA files, aligns them to a\
-                                                    reference genome, filters out any gene alignment with >2% gaps,\
+    parser = argparse.ArgumentParser(description="Downloads raw reads from NCBI, aligns them to a\
+                                                    reference genome, filters out alignments with >2% gaps,\
                                                  and generates XMFAs for core and accessory genes")
     parser.add_argument("accession_list", help="a list of read accessions for SRA files to be downloaded from the NCBI SRA database")
     parser.add_argument("working_dir", help="the working space")
     parser.add_argument("ref_fasta", help="FASTA file for reference genome")
     parser.add_argument("ref_gff", help="GFF file for reference genome for extracting CDS regions")
-    parser.add_argument("out_file", type=str, help="prefix for master XMFA")
+    parser.add_argument("out_prefix", type=str, help="prefix for master XMFA")
     parser.add_argument("--threshold", type=int, default=95, help="threshold percentage above which you're considered a core gene (Default: 95)")
     ##define commandline args as variables
     args = parser.parse_args()
