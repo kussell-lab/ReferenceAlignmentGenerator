@@ -1,5 +1,6 @@
 #!/bin/bash
-# This script maps reads to the reference genome to generate the consensus genomic sequence.
+# This script maps reads to the reference genome to generate the consensus genomic sequence
+# and can be used on the NYU HPC (or presumably any HPC with SLURM as the workload manager)
 # Created by Asher Preska Steinberg (apsteinberg@nyu.edu) based on scripts by Mingzhi Lin (mingzhi9@gmail.com)
 # It requires samtools (https://github.com/samtools/samtools) and smalt (http://www.sanger.ac.uk/science/tools/smalt-0).
 # Inputs:

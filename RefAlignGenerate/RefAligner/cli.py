@@ -21,7 +21,7 @@ def main():
     wrkdir = args.working_dir
     fasta = args.ref_fasta
     gff = args.ref_gff
-    msa = args.out_file
+    msa = args.out_prefix
     t = args.threshold
 
     start_time = time.time()
