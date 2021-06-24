@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import glob
 import time
 import argparse
 import os
@@ -15,6 +16,7 @@ def main():
     parser.add_argument("ref_gff", help="GFF file for reference genome for extracting CDS regions")
     parser.add_argument("out_prefix", type=str, help="prefix for master XMFA")
     parser.add_argument("--threshold", type=int, default=95, help="threshold percentage above which you're considered a core gene (Default: 95)")
+    parser.add_argument("--skipdownloads", type=bool, default=False, help="if you've already downloaded and aligned everything")
     ##define commandline args as variables
     args = parser.parse_args()
     acc_list = args.accession_list
@@ -23,17 +25,19 @@ def main():
     gff = args.ref_gff
     msa = args.out_prefix
     t = args.threshold
+    skip = args.skipdownloads
 
     start_time = time.time()
 
     #Step 1: Fetch SRA files, convert to FASTQ, and map to reference genome
     print("Fetching raw reads and map to reference genome ...")
-    os.system("ConvertMap.sh %s %s %s" %(acc_list, wrkdir, fasta))
+    if not skip:
+        os.system("ConvertMap.sh %s %s %s" %(acc_list, wrkdir, fasta))
 
     #Step 2: Extract CDS regions and output alignments into the master XMFA
     print("extracting CDS regions ...")
     geneinputs = (acc_list, gff, wrkdir, msa)
-    os.system("CollectGeneAlignments %s %s %s_MASTER --appendix '.pileup.fasta' --progress" % geneinputs)
+    os.system("CollectGeneAlignments %s %s %s %s_MASTER --appendix '.pileup.fasta' --progress" % geneinputs)
     #Step 3: Filter gapped sequences
     print("filter gapped sequences ...")
     outdir = os.curdir

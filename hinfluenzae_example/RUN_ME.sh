@@ -12,3 +12,5 @@ out=MSA_HI
 
 mkdir -p ${wrkdir}
 RefAligner ${sra_list} ${wrkdir} ${fasta} ${gff} ${out}
+# to run without downloads, comment out line 14 and uncomment line 16 ...
+#RefAligner ${sra_list} ${wrkdir} ${fasta} ${gff} ${out} --skipdownloads=True

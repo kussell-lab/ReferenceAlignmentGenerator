@@ -47,3 +47,11 @@ via:
 * `go get -u github.com/kussell-lab/ReferenceAlignmentGenerator/MeasureGaps`
 
 After installation, enter `MeasureGaps --help` into your terminal for inputs/outputs.
+
+# Example
+
+For an example of how to run RefAligner, see the directory "hinfluenzae_example" in this repo.
+To run the example, run the RUN_ME.sh script. Downloads and read mapping are the time limiting step. To run the full 
+example takes ~2-3 hours on a standard PC. To skip the download step and run everything else, use the flag 
+`--skipdownloads=True`. This should then only take ~5 minutes to run.
+Example outputs are given in the folder as well.
