@@ -8,7 +8,7 @@ There are several additional features that have been added, as described in "Usa
 
 For basic installation (making reference-guided alignments), clone this github repository to your workstation, and
 install the program RefAligner via pip:
-* `pip install ~/go/src/github.com/apsteinberg/ReferenceAlignmentGenerator/RefAlignGenerate`
+* `pip install ~/go/src/github.com/kussell-lab/ReferenceAlignmentGenerator/RefAlignGenerate`
 
 The following dependencies need to be installed:
 * [SMALT](http://www.sanger.ac.uk/science/tools/smalt-0)
@@ -32,7 +32,7 @@ file in the "hinfluenzae_example" subdirectory. For large jobs (>500 genomes),
 we recommend doing each of the steps that the RefAligner does separately, because there may be an issue with
 one step that creates downstream problems. See the following file for the step-by-step process:
 
-`~/go/src/github.com/apsteinberg/ReferenceAlignmentGenerator/RefAlignGenerate/RefAlignGenerate/RefAligner/cli.py`
+`~/go/src/github.com/kussell-lab/ReferenceAlignmentGenerator/RefAlignGenerate/RefAlignGenerate/RefAligner/cli.py`
 
 # Additional Features
 
