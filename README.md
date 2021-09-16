@@ -6,7 +6,7 @@ There are several additional features that have been added, as described in "Usa
 
 # Installation
 
-For basic installation (making reference-guided alignments), clone this github repository to your workstation, and
+For basic installation (making reference-guided alignments), clone this github repository to your workstation and
 install the program RefAligner via pip:
 * `pip install ~/go/src/github.com/kussell-lab/ReferenceAlignmentGenerator/RefAlignGenerate`
 
