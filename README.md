@@ -22,7 +22,7 @@ As well as several in-house developed programs found in this repo:
 * `go get -u github.com/kussell-lab/ReferenceAlignmentGenerator/CollectGeneAlignments`
 * `go get -u github.com/kussell-lab/ReferenceAlignmentGenerator/SplitGenome`
 
-We have tested this on Mac OS 11.4 and on the NYU HPC (which uses Slurm) using Python 3.8 and 3.9, 
+We have tested this on Mac OS 11.4 and on the NYU HPC (which is Linux-based) using Python 3.8 and 3.9, 
 Go version 1.15.7 and 1.16, SMALT 0.7.6, SAMtools 1.11, sra-tools 2.10.9, parallel 20201022
 
 # Basic Usage
