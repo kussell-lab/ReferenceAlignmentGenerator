@@ -1,5 +1,9 @@
 package main
 
+//this program takes an XMFA file for the flexible genome and replaces all gene alignments
+//with core genome alignments
+//written by Asher Preska Steinberg (apsteinberg@nyu.edu)
+
 import (
 	"fmt"
 	"github.com/kussell-lab/biogo/seq"
