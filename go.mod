@@ -1,4 +1,4 @@
-module github.com/apsteinberg/ReferenceAlignmentGenerator
+module github.com/kussell-lab/ReferenceAlignmentGenerator
 
 go 1.16
 
